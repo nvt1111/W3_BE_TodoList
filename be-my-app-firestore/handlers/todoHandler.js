@@ -62,7 +62,7 @@ const updateTodoById = async (ctx) => {
 
 const updateTodoByIds = async (ctx) => {
     try {
-        const data = await updateTodo(ctx.request.body);
+        const data = await updateTodo(ctx.request.body.ids);
 
         ctx.body = {
             success: true,
@@ -100,7 +100,7 @@ const deleteTodoById = async (ctx) => {
 
 const deleteTodoByIds = async (ctx) => {
     try {
-        const data = await deleteTodo(ctx.request.body);
+        const data = await deleteTodo(ctx.request.body.ids);
 
         ctx.body = {
             success: true,
