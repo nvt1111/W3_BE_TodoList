@@ -7,7 +7,7 @@ const router = new Router({
 });
 
 router.get('/todos', todoHandler.getTodos);
-router.post('/todos', todoHandler.createTodo);
+router.post('/todos', validateTodo, todoHandler.createTodo);
 router.put('/todos', todoHandler.updateTodoByIds);
 router.put('/todo/:id', todoHandler.updateTodoById);
 router.delete('/todo/:id', todoHandler.deleteTodoById);
