@@ -6,6 +6,8 @@ export async function getAll() {
     console.log(querySnapshot);
     const result = querySnapshot.docs.map((query) => {
         return {
+
+            //todo: viết lại thành hàm prepareDocs nhé để dùng đc ở nhiều chỗ nữa 
             id: query.id, ...query.data()
         }
     })
@@ -19,6 +21,7 @@ export async function add(data) {
         createAt: new Date()
     });
     const id = documentReference.id;
+    //todo: sao lại cần lấy ra kiểu này nhỉ ? 
     const todoDoc = (await todosRef.doc(id).get()).data();
     const { createAt, completed, title } = todoDoc;
 
@@ -27,6 +30,7 @@ export async function add(data) {
 
 export async function updateTodo(ids) {
     const updatedTodos = await Promise.all(ids.map(async (id) => {
+        //todo: tìm cách khác , không get lại ở update , delete 
         const todoDoc = await todosRef.doc(id).get();
         const { createAt, title, completed } = todoDoc.data()
         await todosRef.doc(id).update({ completed: !completed })
