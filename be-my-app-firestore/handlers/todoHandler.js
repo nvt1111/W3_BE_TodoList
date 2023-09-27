@@ -43,12 +43,13 @@ const createTodo = async (ctx) => {
 
 const updateTodoById = async (ctx) => {
     try {
-        const data = await updateTodo([ctx.params.id]);
+        const data = [{ id: ctx.params.id, ...ctx.request.body }];
+        const todoData = await updateTodo(data);
 
         ctx.body = {
             success: true,
             message: `Todo with ID ${ctx.params.id} has been UPDATED`,
-            data: data
+            data: todoData
         };
     } catch (e) {
         ctx.status = 404;
@@ -62,7 +63,7 @@ const updateTodoById = async (ctx) => {
 
 const updateTodoByIds = async (ctx) => {
     try {
-        const data = await updateTodo(ctx.request.body.ids);
+        const data = await updateTodo(ctx.request.body);
 
         ctx.body = {
             success: true,
@@ -100,12 +101,12 @@ const deleteTodoById = async (ctx) => {
 
 const deleteTodoByIds = async (ctx) => {
     try {
-        const data = await deleteTodo(ctx.request.body.ids);
+        const data = await deleteTodo(ctx.request.body);
 
         ctx.body = {
             success: true,
             message: `Todo with ID ${ctx.request.body} has been DELETE`,
-            data: data
+            data: data.data
         };
     } catch (e) {
         ctx.status = 404;

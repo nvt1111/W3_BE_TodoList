@@ -1,56 +1,43 @@
 import db from '../firestore/firebase.js';
 const todosRef = db.collection('todos');
 
+const prepareData = (doc) => {
+    return { id: doc.id, ...doc.data() }
+}
+
 export async function getAll() {
     let querySnapshot = await todosRef.orderBy('createAt', 'DESC').get();
-    console.log(querySnapshot);
-    const result = querySnapshot.docs.map((query) => {
-        return {
-
-            //todo: viết lại thành hàm prepareDocs nhé để dùng đc ở nhiều chỗ nữa 
-            id: query.id, ...query.data()
-        }
-    })
+    const result = querySnapshot.docs.map((doc) => prepareData(doc));
 
     return result;
 }
 
 export async function add(data) {
-    const documentReference = await todosRef.add({
-        ...data,
-        createAt: new Date()
-    });
+    const dataDoc = { ...data, createAt: new Date() }
+    const documentReference = await todosRef.add(dataDoc);
     const id = documentReference.id;
-    //todo: sao lại cần lấy ra kiểu này nhỉ ? 
-    const todoDoc = (await todosRef.doc(id).get()).data();
-    const { createAt, completed, title } = todoDoc;
 
-    return { id, createAt, completed, title };
+    return { id, ...dataDoc };
 }
 
-export async function updateTodo(ids) {
-    const updatedTodos = await Promise.all(ids.map(async (id) => {
-        //todo: tìm cách khác , không get lại ở update , delete 
-        const todoDoc = await todosRef.doc(id).get();
-        const { createAt, title, completed } = todoDoc.data()
-        await todosRef.doc(id).update({ completed: !completed })
+export async function updateTodo(data) {
+    const jobs = [];
 
-        return { id, createAt, title, completed: !completed };
-    }))
+    data.map((item) => {
+        const { id, ...rest } = item
+        jobs.push(todosRef.doc(id).update({ ...rest }))
+    });
 
-    return updatedTodos
+    return await Promise.all(jobs);
 }
 
 export async function deleteTodo(ids) {
-    const deletedTodos = await Promise.all(ids.map(async (id) => {
-        const todoDoc = await todosRef.doc(id).get();
-        const { createAt, title, completed } = todoDoc.data()
-        await todosRef.doc(id).delete();
+    const jobs = [];
+    ids.map((id) => {
+        jobs.push(todosRef.doc(id).delete())
+    });
 
-        return { id, createAt, title, completed };
-    }))
-
-    return deletedTodos
+    return await Promise.all(jobs);
 }
 
 

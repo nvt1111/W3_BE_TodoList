@@ -2,7 +2,8 @@ import Koa from 'koa'
 import cors from '@koa/cors'
 import { koaBody } from 'koa-body'
 import routes from './routes/routes.js';
-import bodyParser from 'koa-bodyparser'
+import bodyParser from 'koa-bodyparser';
+
 const app = new Koa();
 
 app.use(
@@ -12,7 +13,6 @@ app.use(
         credentials: true
     })
 );
-
 // truyền body vào delete
 app.use(koaBody({
     parsedMethods: ["PUT", "GET", "POST", "DELETE"]
